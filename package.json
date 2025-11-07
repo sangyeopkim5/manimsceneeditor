@@ -16,7 +16,7 @@
     "connect:database:custom": "npx create-volo-app --connect --database custom",
     "connect:deploy": "npx create-volo-app --connect --deploy",
     "connection:status": "npx create-volo-app --status",
-    "build": "pnpm install --filter ./ui --no-frozen-lockfile && pnpm --filter ./ui run build",
+    "build": "pnpm --filter ./ui run build",
     "deploy": "cd server && wrangler deploy && echo 'Frontend deployment: Connect your Git repo to Cloudflare Pages'"
   },
   "engines": {

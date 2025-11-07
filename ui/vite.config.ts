@@ -4,6 +4,10 @@
   import path from 'path';
 
   export default defineConfig({
+    // Base URL 설정 - Cloudflare Pages에서 서브디렉토리 배포 시 사용
+    // 환경 변수 VITE_BASE_URL로 설정 가능 (기본값: '/')
+    base: process.env.VITE_BASE_URL || '/',
+    
     plugins: [react()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
@@ -51,8 +55,35 @@
       },
     },
     build: {
+      // 빌드 타겟 - esnext는 최신 브라우저 지원
+      // Cloudflare Pages는 최신 브라우저를 지원하므로 esnext 사용 가능
       target: 'esnext',
-      outDir: 'dist',  // Cloudflare Pages는 dist 디렉토리를 사용
+      // 빌드 출력 디렉토리 - Cloudflare Pages는 이 디렉토리를 자동으로 감지
+      outDir: 'dist',
+      // 소스맵 생성 (프로덕션에서는 비활성화하여 파일 크기 감소)
+      sourcemap: process.env.NODE_ENV === 'development',
+      // 코드 압축 최적화
+      minify: 'esbuild',
+      // 청크 크기 경고 임계값 (KB)
+      chunkSizeWarningLimit: 1000,
+      // 빌드 시 사용하지 않는 코드 제거
+      rollupOptions: {
+        // Deno 코드 제외 (Supabase Functions는 Deno 환경에서만 실행됨)
+        // Cloudflare Pages는 Node.js 기반이므로 Deno 코드는 빌드에서 제외
+        external: (id) => {
+          // Deno 관련 코드 제외
+          if (id.includes('supabase/functions') || id.includes('supabase\\functions')) {
+            return true;
+          }
+          return false;
+        },
+        output: {
+          // 청크 파일명 형식
+          chunkFileNames: 'assets/js/[name]-[hash].js',
+          entryFileNames: 'assets/js/[name]-[hash].js',
+          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+        },
+      },
     },
     server: {
       port: 3000,

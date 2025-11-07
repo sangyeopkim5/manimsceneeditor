@@ -1,7 +1,8 @@
 // API 호출 유틸리티
 // 백엔드 API URL (환경 변수 또는 기본값)
 // 환경 변수는 .env 파일에 VITE_BACKEND_API_URL=http://localhost:8787 형식으로 설정 가능
-const BACKEND_API_URL = (import.meta as any).env?.VITE_BACKEND_API_URL || 'http://localhost:8787';
+// Cloudflare Pages에서는 환경 변수로 VITE_BACKEND_API_URL을 설정해야 합니다
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:8787';
 
 // API 호출 헬퍼 (로컬 백엔드 서버 사용)
 async function apiCall(endpoint: string, options: RequestInit = {}) {

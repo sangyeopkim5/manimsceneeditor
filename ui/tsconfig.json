@@ -14,5 +14,10 @@
     "strict": true
   },
   "include": ["src"],
-  "exclude": ["../supabase", "node_modules", "src/supabase/functions/**/*"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/node_modules/**",
+    "src/supabase/functions/**/*"
+  ]
 }
