@@ -1,0 +1,21 @@
+name = "manim-scene-editor-api"
+main = "src/api.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+RUNTIME = "cloudflare"
+
+# 환경 변수는 wrangler secret 명령어로 설정해야 합니다:
+# wrangler secret put CLAUDE_API_KEY
+# wrangler secret put DATABASE_URL
+# wrangler secret put FIREBASE_PROJECT_ID
+# wrangler secret put FIREBASE_PRIVATE_KEY
+# wrangler secret put FIREBASE_CLIENT_EMAIL
+# wrangler secret put RENDER_SERVER_URL (선택사항)
+
+# 개발 환경 설정
+[dev]
+local_protocol = "http"
+port = 8787
+

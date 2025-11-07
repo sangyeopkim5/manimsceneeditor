@@ -1,0 +1,157 @@
+/* 레이아웃 비율 고정 - 클릭해도 절대 변하지 않음 */
+
+/* 기본 레이아웃 (1920x1080 최적화) */
+.layout-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.file-tree-panel {
+  width: 15%;
+  min-width: 15%;
+  max-width: 15%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.agent-panel {
+  width: 35%;
+  min-width: 35%;
+  max-width: 35%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.viewer-panel {
+  width: 50%;
+  min-width: 50%;
+  max-width: 50%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+/* 작은 노트북 (1366x768, 1440x900) */
+@media (max-width: 1440px) {
+  .file-tree-panel {
+    width: 12%;
+    min-width: 12%;
+    max-width: 12%;
+  }
+
+  .agent-panel {
+    width: 33%;
+    min-width: 33%;
+    max-width: 33%;
+  }
+
+  .viewer-panel {
+    width: 55%;
+    min-width: 55%;
+    max-width: 55%;
+  }
+}
+
+/* 매우 작은 노트북 (1280x720) */
+@media (max-width: 1366px) {
+  .file-tree-panel {
+    width: 10%;
+    min-width: 10%;
+    max-width: 10%;
+  }
+
+  .agent-panel {
+    width: 30%;
+    min-width: 30%;
+    max-width: 30%;
+  }
+
+  .viewer-panel {
+    width: 60%;
+    min-width: 60%;
+    max-width: 60%;
+  }
+}
+
+/* 큰 노트북/데스크탑 (2560x1440) */
+@media (min-width: 2000px) {
+  .file-tree-panel {
+    width: 18%;
+    min-width: 18%;
+    max-width: 18%;
+  }
+
+  .agent-panel {
+    width: 32%;
+    min-width: 32%;
+    max-width: 32%;
+  }
+
+  .viewer-panel {
+    width: 50%;
+    min-width: 50%;
+    max-width: 50%;
+  }
+}
+
+/* 초고해상도 (4K) */
+@media (min-width: 3000px) {
+  .file-tree-panel {
+    width: 20%;
+    min-width: 20%;
+    max-width: 20%;
+  }
+
+  .agent-panel {
+    width: 30%;
+    min-width: 30%;
+    max-width: 30%;
+  }
+
+  .viewer-panel {
+    width: 50%;
+    min-width: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Terminal 높이 고정 */
+.viewer-content {
+  height: 75%;
+  min-height: 75%;
+  max-height: 75%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.terminal-panel {
+  height: 25%;
+  min-height: 25%;
+  max-height: 25%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+/* 초기 화면 최적화 */
+@media (max-width: 640px) {
+  /* 모바일 */
+  .initial-prompt-container {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* 태블릿 */
+  .initial-prompt-container {
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* 노트북/데스크탑 */
+  .initial-prompt-container {
+    padding: 3rem;
+  }
+}
+

@@ -62,3 +62,14 @@ worker-configuration.d.ts
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# Render server
+render-server/jobs/
+render-server/__pycache__/
+render-server/tools/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Generated videos (optional - uncomment if you don't want to commit videos)
+# public/media/video/*.mp4
