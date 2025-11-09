@@ -37,15 +37,15 @@ if (typeof process !== 'undefined' && process.env) {
   setEnvContext(process.env);
 }
 
-// Environment context middleware - detect runtime using RUNTIME env var
+// Environment context middleware - set env context for all requests
 app.use('*', async (c, next) => {
-  if (c.env?.RUNTIME === 'cloudflare') {
+  // Cloudflare Workers에서는 c.env에 모든 환경 변수가 포함됨
+  if (c.env) {
     setEnvContext(c.env);
   }
   
   await next();
   // No need to clear context - env vars are the same for all requests
-  // In fact, clearing the context would cause the env vars to potentially be unset for parallel requests
 });
 
 // Middleware
