@@ -13,6 +13,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 type Env = {
   RUNTIME?: string;
+  CLAUDE_API_KEY?: string;
   [key: string]: any;
 };
 
@@ -183,8 +184,8 @@ api.post('/merge-videos', async (c) => {
 });
 
 // Claude API - Scene 생성
-async function generateInitialScenes(prompt: string, images?: string[]) {
-  const apiKey = getRequiredEnv('CLAUDE_API_KEY');
+async function generateInitialScenes(prompt: string, images?: string[], apiKey?: string) {
+  const key = apiKey || getRequiredEnv('CLAUDE_API_KEY');
 
   const systemPrompt = `당신은 Manim(Mathematical Animation Engine) 전문가입니다.
 사용자의 요청에 따라 교육용 애니메이션 영상을 논리적인 Scene들로 나누고, 각 Scene의 Python/Manim 코드를 생성하세요.
@@ -209,7 +210,7 @@ async function generateInitialScenes(prompt: string, images?: string[]) {
   "description": "Scene 구성에 대한 설명"
 }`;
 
-  const anthropic = new Anthropic({ apiKey });
+  const anthropic = new Anthropic({ apiKey: key });
 
   try {
     const contentParts: any[] = [{ type: 'text', text: prompt }];
@@ -267,9 +268,10 @@ async function modifyScene(
   prompt: string,
   currentCode: string,
   chatHistory: ChatMessage[],
-  images?: string[]
+  images?: string[],
+  apiKey?: string
 ) {
-  const apiKey = getRequiredEnv('CLAUDE_API_KEY');
+  const key = apiKey || getRequiredEnv('CLAUDE_API_KEY');
 
   const systemPrompt = `당신은 Manim 코드 수정 전문가입니다.
 사용자의 요청에 따라 기존 Manim Scene 코드를 수정하세요.
@@ -288,7 +290,7 @@ async function modifyScene(
   "explanation": "수정 내용에 대한 설명"
 }`;
 
-  const anthropic = new Anthropic({ apiKey });
+  const anthropic = new Anthropic({ apiKey: key });
 
   try {
     const messages: any[] = [];
@@ -380,7 +382,9 @@ api.post('/generate-initial', async (c) => {
     console.log('[generate-initial] Prompt:', prompt);
     console.log('[generate-initial] Images count:', images ? images.length : 0);
 
-    const { scenes, sceneCodes, description } = await generateInitialScenes(prompt, images);
+    // Cloudflare Workers 환경에서는 c.env에서 직접 가져오기
+    const apiKey = (c.env as any)?.CLAUDE_API_KEY || getRequiredEnv('CLAUDE_API_KEY');
+    const { scenes, sceneCodes, description } = await generateInitialScenes(prompt, images, apiKey);
 
     const projectId = `project_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     const now = new Date().toISOString();
@@ -439,12 +443,15 @@ api.post('/modify-scene', async (c) => {
     console.log('[modify-scene] Project:', projectId, 'Scene:', sceneNumber, 'Prompt:', prompt);
     console.log('[modify-scene] Images count:', images ? images.length : 0);
 
+    // Cloudflare Workers 환경에서는 c.env에서 직접 가져오기
+    const apiKey = (c.env as any)?.CLAUDE_API_KEY || getRequiredEnv('CLAUDE_API_KEY');
     const { updatedCode, explanation } = await modifyScene(
       sceneNumber,
       prompt,
       currentCode,
       chatHistory || [],
-      images
+      images,
+      apiKey
     );
 
     const now = new Date().toISOString();
@@ -497,8 +504,8 @@ api.post('/chat/stream', async (c) => {
 
     console.log('[chat/stream] Starting stream with', messages.length, 'messages');
 
-    // 환경 변수에서 API 키 가져오기
-    const apiKey = getRequiredEnv('CLAUDE_API_KEY');
+    // Cloudflare Workers 환경에서는 c.env에서 직접 가져오기
+    const apiKey = (c.env as any)?.CLAUDE_API_KEY || getRequiredEnv('CLAUDE_API_KEY');
 
     // Anthropic 클라이언트 생성
     const anthropic = new Anthropic({
@@ -530,13 +537,7 @@ api.post('/chat/stream', async (c) => {
             max_tokens: 8192,
             messages: formattedMessages,
             // Prompt Caching 적용
-            system: [
-              {
-                type: 'text',
-                text: systemPrompt,
-                cache_control: { type: 'ephemeral' },
-              },
-            ],
+            system: systemPrompt,
           });
 
           // 스트림 데이터 전송
