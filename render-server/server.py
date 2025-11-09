@@ -58,13 +58,16 @@ async def render(request: RenderRequest):
             request.dest_path = str(VIDEO_DIR / video_filename)
         
         # 렌더링 실행
+        print(f"[server.py] Starting render with code length: {len(request.code)}")
         result = render_manim(request.code, request.dest_path)
+        print(f"[server.py] Render result: {result}")
         
         if result.get("ok"):
             # 비디오 파일 경로를 URL로 변환
             video_path = Path(result.get("video_relpath", request.dest_path))
             video_url = f"/video/{video_path.name}"
             
+            print(f"[server.py] Render successful! Video URL: {video_url}")
             return {
                 "success": True,
                 "videoUrl": video_url,
@@ -72,12 +75,17 @@ async def render(request: RenderRequest):
                 "message": "렌더링 성공"
             }
         else:
+            error_msg = result.get("error", "렌더링 실패")
+            print(f"[server.py] Render failed! Error: {error_msg}")
             raise HTTPException(
                 status_code=500,
-                detail=result.get("error", "렌더링 실패")
+                detail=error_msg
             )
             
     except Exception as e:
+        print(f"[server.py] Exception in render: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=500,
             detail=f"렌더링 오류: {str(e)}"
