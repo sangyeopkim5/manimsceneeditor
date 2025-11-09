@@ -391,6 +391,8 @@ api.post('/generate-initial', async (c) => {
 
     // Cloudflare Workers 환경에서는 c.env에서 직접 가져오기
     const apiKey = (c.env as any)?.CLAUDE_API_KEY || getRequiredEnv('CLAUDE_API_KEY');
+    console.log('[generate-initial] API Key exists:', !!apiKey);
+    console.log('[generate-initial] API Key starts with:', apiKey?.substring(0, 20));
     const { scenes, sceneCodes, description } = await generateInitialScenes(prompt, images, apiKey);
 
     const projectId = `project_${Date.now()}_${Math.random().toString(36).substring(7)}`;
@@ -452,6 +454,8 @@ api.post('/modify-scene', async (c) => {
 
     // Cloudflare Workers 환경에서는 c.env에서 직접 가져오기
     const apiKey = (c.env as any)?.CLAUDE_API_KEY || getRequiredEnv('CLAUDE_API_KEY');
+    console.log('[modify-scene] API Key exists:', !!apiKey);
+    console.log('[modify-scene] API Key starts with:', apiKey?.substring(0, 20));
     const { updatedCode, explanation } = await modifyScene(
       sceneNumber,
       prompt,
