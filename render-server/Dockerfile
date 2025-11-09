@@ -2,6 +2,9 @@ FROM python:3.11-slim
 
 # 시스템 의존성 설치
 RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    g++ \
     ffmpeg \
     libcairo2-dev \
     libpango1.0-dev \
@@ -9,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf-2.0-0 \
     libffi-dev \
     shared-mime-info \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
