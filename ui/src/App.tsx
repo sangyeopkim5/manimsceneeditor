@@ -345,7 +345,10 @@ export default function App() {
         
         addLog("error", `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
         
-        throw new Error(response.error || "렌더링 실패");
+        if (showToast) toast.error("렌더링 실패");
+        
+        // throw하지 않고 false 반환 - Scene 수정/Chat은 계속 가능하도록
+        return false;
       }
 
       if (response.videoUrl) {
