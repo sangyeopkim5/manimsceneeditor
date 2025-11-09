@@ -234,7 +234,7 @@ async function generateInitialScenes(prompt: string, images?: string[], apiKey?:
     }
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-5-20250929',
       max_tokens: 8192,
       system: systemPrompt,
       messages: [{ role: 'user', content: contentParts }]
@@ -339,7 +339,7 @@ ${prompt}`
     });
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-5-20250929',
       max_tokens: 4096,
       system: systemPrompt,
       messages: messages
@@ -533,7 +533,7 @@ api.post('/chat/stream', async (c) => {
         try {
           // Anthropic 스트리밍 시작
           const messageStream = await anthropic.messages.stream({
-            model: 'claude-sonnet-4-20250514',
+            model: 'claude-sonnet-4-5-20250929',
             max_tokens: 8192,
             messages: formattedMessages,
             // Prompt Caching 적용
