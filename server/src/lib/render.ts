@@ -106,7 +106,7 @@ export async function mergeVideos(
       // Railway 서버가 반환한 상대 경로를 절대 URL로 변환
       const videoUrl = result.videoUrl.startsWith('http') 
         ? result.videoUrl 
-        : `${RENDER_SERVER_URL}${result.videoUrl}`;
+        : `${renderServerUrl}${result.videoUrl}`;
       
       console.log(`[mergeVideos] Merge successful! Video URL: ${videoUrl}`);
       return {
