@@ -13,12 +13,9 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     shared-mime-info \
     pkg-config \
-    texlive \
-    texlive-latex-extra \
-    texlive-fonts-extra \
-    texlive-latex-recommended \
-    texlive-science \
-    texlive-fonts-recommended \
+    texlive-latex-base \
+    dvipng \
+    cm-super \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
