@@ -50,7 +50,12 @@ app.use('*', async (c, next) => {
 
 // Middleware
 app.use('*', logger());
-app.use('*', cors());
+app.use('*', cors({
+  origin: ['https://manimsceneeditor2.pages.dev', 'https://hotitemtoday.com', 'http://localhost:3000'],
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Claude-API-Key'],
+}));
 
 // Health check route - public
 app.get('/', (c) => c.json({ status: 'ok', message: 'API is running' }));
