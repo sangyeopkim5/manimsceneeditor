@@ -1,17 +1,15 @@
 // Railway 렌더링 서버로 HTTP 요청을 보내 Manim 렌더링
-import { getEnv } from './env';
-
-// Railway 렌더링 서버 URL
-const RENDER_SERVER_URL = getEnv('RENDER_SERVER_URL') || 'http://localhost:8000';
 
 /**
  * Manim 코드 렌더링
  */
 export async function renderManim(
-  manimCode: string
+  manimCode: string,
+  renderServerUrl: string
 ): Promise<{ success: boolean; videoUrl: string | null; error?: string; stdout?: string; stderr?: string }> {
   try {
-    console.log(`[renderManim] Sending render request to ${RENDER_SERVER_URL}`);
+    console.log(`[renderManim] Using render server: ${renderServerUrl}`);
+    console.log(`[renderManim] Sending render request...`);
 
     // 코드에 이미 import가 있는지 확인
     const trimmedCode = manimCode.trim();
@@ -23,7 +21,7 @@ export async function renderManim(
     }
 
     // Railway 렌더링 서버로 요청
-    const response = await fetch(`${RENDER_SERVER_URL}/render`, {
+    const response = await fetch(`${renderServerUrl}/render`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +42,7 @@ export async function renderManim(
       // Railway 서버가 반환한 상대 경로를 절대 URL로 변환
       const videoUrl = result.videoUrl.startsWith('http') 
         ? result.videoUrl 
-        : `${RENDER_SERVER_URL}${result.videoUrl}`;
+        : `${renderServerUrl}${result.videoUrl}`;
       
       console.log(`[renderManim] Rendering successful! Video URL: ${videoUrl}`);
       return {
@@ -76,16 +74,18 @@ export async function renderManim(
  * 여러 영상을 하나로 병합 (ffmpeg 사용)
  */
 export async function mergeVideos(
-  videoUrls: string[]
+  videoUrls: string[],
+  renderServerUrl: string
 ): Promise<{ success: boolean; videoUrl: string | null; error?: string }> {
   try {
+    console.log(`[mergeVideos] Using render server: ${renderServerUrl}`);
     console.log(`[mergeVideos] Sending merge request for ${videoUrls.length} videos`);
 
     // Railway 렌더링 서버로 요청
     // videoUrls를 Railway 서버가 접근 가능한 경로로 변환해야 함
     // 현재는 videoUrls가 백엔드 서버의 로컬 경로이므로 수정 필요
     
-    const response = await fetch(`${RENDER_SERVER_URL}/merge`, {
+    const response = await fetch(`${renderServerUrl}/merge`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

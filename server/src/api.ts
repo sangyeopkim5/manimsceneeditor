@@ -139,8 +139,12 @@ api.post('/render-scene', async (c) => {
       }, 400);
     }
 
-    // Python 스크립트 직접 실행하여 렌더링
-    const result = await renderManim(manim_code);
+    // Cloudflare Workers 환경에서 Railway URL 가져오기
+    const renderServerUrl = (c.env as any)?.RENDER_SERVER_URL || 'https://manimsceneeditor-production.up.railway.app';
+    console.log('[render-scene] Using RENDER_SERVER_URL:', renderServerUrl);
+
+    // Railway 렌더링 서버로 요청
+    const result = await renderManim(manim_code, renderServerUrl);
     
     return c.json(result);
   } catch (error) {
@@ -169,8 +173,11 @@ api.post('/merge-videos', async (c) => {
 
     console.log('[merge-videos] Merging videos:', videoUrls);
     
+    // Cloudflare Workers 환경에서 Railway URL 가져오기
+    const renderServerUrl = (c.env as any)?.RENDER_SERVER_URL || 'https://manimsceneeditor-production.up.railway.app';
+    
     // 영상 병합 실행
-    const result = await mergeVideos(videoUrls);
+    const result = await mergeVideos(videoUrls, renderServerUrl);
     
     return c.json(result);
   } catch (error) {
