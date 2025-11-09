@@ -6,7 +6,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { authMiddleware } from './middleware/auth';
 import { getDatabase, testDatabaseConnection } from './lib/db';
-import { setEnvContext, clearEnvContext, getDatabaseUrl } from './lib/env';
+import { setEnvContext, clearEnvContext, getDatabaseUrl, getRequiredEnv } from './lib/env';
 import * as schema from './schema/users';
 import { renderManim, mergeVideos } from './lib/render';
 import Anthropic from '@anthropic-ai/sdk';
@@ -184,11 +184,7 @@ api.post('/merge-videos', async (c) => {
 
 // Claude API - Scene 생성
 async function generateInitialScenes(prompt: string, images?: string[]) {
-  const apiKey = process.env.CLAUDE_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('CLAUDE_API_KEY 환경 변수가 설정되지 않았습니다.');
-  }
+  const apiKey = getRequiredEnv('CLAUDE_API_KEY');
 
   const systemPrompt = `당신은 Manim(Mathematical Animation Engine) 전문가입니다.
 사용자의 요청에 따라 교육용 애니메이션 영상을 논리적인 Scene들로 나누고, 각 Scene의 Python/Manim 코드를 생성하세요.
@@ -273,11 +269,7 @@ async function modifyScene(
   chatHistory: ChatMessage[],
   images?: string[]
 ) {
-  const apiKey = process.env.CLAUDE_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('CLAUDE_API_KEY 환경 변수가 설정되지 않았습니다.');
-  }
+  const apiKey = getRequiredEnv('CLAUDE_API_KEY');
 
   const systemPrompt = `당신은 Manim 코드 수정 전문가입니다.
 사용자의 요청에 따라 기존 Manim Scene 코드를 수정하세요.
@@ -506,13 +498,7 @@ api.post('/chat/stream', async (c) => {
     console.log('[chat/stream] Starting stream with', messages.length, 'messages');
 
     // 환경 변수에서 API 키 가져오기
-    const apiKey = process.env.CLAUDE_API_KEY;
-    
-    if (!apiKey) {
-      return c.json({
-        error: 'CLAUDE_API_KEY 환경 변수가 설정되지 않았습니다',
-      }, 500);
-    }
+    const apiKey = getRequiredEnv('CLAUDE_API_KEY');
 
     // Anthropic 클라이언트 생성
     const anthropic = new Anthropic({
